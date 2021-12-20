@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "824901929499",
+    "project_id": "pusbindiklat-2900a",
+    "storage_bucket": "pusbindiklat-2900a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:824901929499:android:b318ca0c4630b1059186be",
+        "android_client_info": {
+          "package_name": "com.example.pusbindiklat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "824901929499-697o1qp0iom16v4lcm7mb5nfjkvfsutr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBx8n4LxiaFbZwNdQQwrwNTop-CHI7z1Lw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "824901929499-697o1qp0iom16v4lcm7mb5nfjkvfsutr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:pusbindiklat/services/auth_services.dart';
 import 'package:pusbindiklat/theme.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
+  @override
+  _ProfilePageState createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+ 
+
   @override
   Widget build(BuildContext context) {
     Widget header() {
@@ -102,7 +110,9 @@ class ProfilePage extends StatelessWidget {
                   height: 12,
                 ),
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () async {
+                    await AuthServices.signOut();
+                  },
                   child: Row(
                     children: [
                       Container(

@@ -1,7 +1,27 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:pusbindiklat/pages/home/main_page.dart';
+import 'package:pusbindiklat/pages/sign_up_page.dart';
+import 'package:pusbindiklat/services/auth_services.dart';
 import 'package:pusbindiklat/theme.dart';
 
-class SignInPage extends StatelessWidget {
+bool isSignIn = false;
+
+class SignInPage extends StatefulWidget {
+  @override
+  _SignInPageState createState() => _SignInPageState();
+}
+
+class _SignInPageState extends State<SignInPage> {
+  @override
+  AuthServices _authServices = AuthServices();
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     Widget title() {
@@ -66,6 +86,7 @@ class SignInPage extends StatelessWidget {
                     ),
                     Expanded(
                       child: TextFormField(
+                        controller: emailController,
                         decoration: InputDecoration.collapsed(
                           hintText: 'Masukan Email Anda',
                           hintStyle: primaryTextStyle.copyWith(
@@ -120,6 +141,7 @@ class SignInPage extends StatelessWidget {
                     ),
                     Expanded(
                       child: TextFormField(
+                        controller: passwordController,
                         decoration: InputDecoration.collapsed(
                           hintText: 'Masukan Password Anda',
                           hintStyle: primaryTextStyle.copyWith(
@@ -152,7 +174,8 @@ class SignInPage extends StatelessWidget {
             ),
             GestureDetector(
               onTap: () {
-                Navigator.pushNamed(context, '/sign-up');
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => SignUpPage()));
               },
               child: Text(
                 " Daftar",
@@ -169,31 +192,74 @@ class SignInPage extends StatelessWidget {
     }
 
     Widget btnSignIn() {
-      return Container(
-        height: 50,
-        width: double.infinity,
-        margin: EdgeInsets.only(
-          top: 30,
-        ),
-        child: TextButton(
-          onPressed: () {
-            Navigator.pushNamed(context, '/home');
-          },
-          style: TextButton.styleFrom(
-              backgroundColor: Color(0xffB12341),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              )),
-          child: Text(
-            "Masuk",
-            style: primaryTextStyle.copyWith(
-              fontSize: 16,
-              fontWeight: semiBold,
-              color: Colors.white,
-            ),
-          ),
-        ),
-      );
+      return isSignIn
+          ? CircularProgressIndicator()
+          : Container(
+              height: 50,
+              width: double.infinity,
+              margin: EdgeInsets.only(
+                top: 30,
+              ),
+              child: TextButton(
+                onPressed: () async {
+                  setState(() {
+                    isSignIn = true;
+                  });
+                  User _auth = await AuthServices.signIn(
+                      emailController.text, passwordController.text);
+
+                  if (_auth == null) {
+                    // setState(() {
+                    //   isSignIn = false;
+                    // });
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: Text("Anda Gagal Login"),
+                            content: Text(
+                                "Email Dan Password Yang Anda Masukan Salah"),
+                            actions: [
+                              // ignore: deprecated_member_use
+                              RaisedButton(
+                                  color: Colors.white,
+                                  elevation: 0,
+                                  child: Text("Coba Lagi"),
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  }),
+
+                              // ignore: deprecated_member_use
+                              // FlatButton(onPressed: () {
+                              //   Navigator.pop(context);
+                              // }, child: Text("Coba Lagi"))
+                            ],
+                          );
+                        });
+                  }
+                  setState(() {
+                    isSignIn = false;
+                  });
+                  // await AuthServices.signIn(
+                  //     emailController.text, passwordController.text);
+                  // Navigator.pop(context);
+                  // MaterialPageRoute(builder: (context) => MainPage());
+                },
+                style: TextButton.styleFrom(
+                    backgroundColor: Color(0xffB12341),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    )),
+                child: Text(
+                  "Masuk",
+                  style: primaryTextStyle.copyWith(
+                    fontSize: 16,
+                    fontWeight: semiBold,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            );
     }
 
     Widget content() {
@@ -228,6 +294,9 @@ class SignInPage extends StatelessWidget {
             emailInput(),
             passwordInput(),
             signUp(),
+            SizedBox(
+              height: 30,
+            ),
             btnSignIn(),
           ],
         ),
