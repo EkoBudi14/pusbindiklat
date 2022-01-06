@@ -1,5 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:pusbindiklat/model/user.dart';
 import 'package:pusbindiklat/services/auth_services.dart';
+import 'package:pusbindiklat/services/get_data.dart';
 import 'package:pusbindiklat/theme.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -8,7 +12,11 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
- 
+  Users users = Users();
+  User _user = FirebaseAuth.instance.currentUser;
+  // User user = Users.fromDocument();
+  final CollectionReference _userRef =
+      FirebaseFirestore.instance.collection('user');
 
   @override
   Widget build(BuildContext context) {
@@ -144,7 +152,22 @@ class _ProfilePageState extends State<ProfilePage> {
         ? Scaffold(
             backgroundColor: Color(0xffF6F6F6),
             appBar: header(),
-            body: content(),
+            body: Container(
+              child: Column(
+                children: [
+                  // ignore: deprecated_member_use
+                  RaisedButton(
+                    onPressed: () async {
+                      DocumentSnapshot snapshot =
+                          await GetData.getUser("1PjLSVbPP318bwUKOhAE");
+                      print(snapshot.data()['fullName']);
+                    },
+                  ),
+                ],
+              ),
+            )
+            // content()
+            ,
           )
         : Scaffold(
             backgroundColor: Color(0xffF6F6F6),

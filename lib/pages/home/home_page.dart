@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:pusbindiklat/pages/Prestasi_page.dart';
+import 'package:pusbindiklat/pages/profile_kami_page.dart';
+import 'package:pusbindiklat/pages/tata_tertib_page.dart';
+import 'package:pusbindiklat/pages/tentang_kami.dart';
 import 'package:pusbindiklat/theme.dart';
 import 'package:pusbindiklat/widget/card_image.dart';
 
@@ -76,7 +80,12 @@ class HomePage extends StatelessWidget {
             // ignore: deprecated_member_use
             child: RaisedButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/tata-tertib');
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => TatatertibPage(),
+                  ),
+                );
               },
               color: Colors.white,
               shape: RoundedRectangleBorder(
@@ -127,7 +136,12 @@ class HomePage extends StatelessWidget {
             // ignore: deprecated_member_use
             child: RaisedButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/prestasi');
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => PrestasiPage(),
+                  ),
+                );
               },
               color: Colors.white,
               shape: RoundedRectangleBorder(
@@ -178,7 +192,12 @@ class HomePage extends StatelessWidget {
             // ignore: deprecated_member_use
             child: RaisedButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/profile-kami');
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => ProfileKami(),
+                  ),
+                );
               },
               color: Colors.white,
               shape: RoundedRectangleBorder(
@@ -229,7 +248,12 @@ class HomePage extends StatelessWidget {
             // ignore: deprecated_member_use
             child: RaisedButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/tentang-kami');
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => TentangKami(),
+                  ),
+                );
               },
               color: Colors.white,
               shape: RoundedRectangleBorder(
