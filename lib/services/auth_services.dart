@@ -3,8 +3,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 class AuthServices {
   static FirebaseAuth _auth = FirebaseAuth.instance;
 
-  static Future<User> signUp(String email, String password, String name,
-      String completeName, String noTelp) async {
+  static Future<User> signUp(
+    String email,
+    String password,
+    String name,
+    String completeName,
+    String noTelp,
+  ) async {
     try {
       UserCredential userCredential =
           await _auth.createUserWithEmailAndPassword(
@@ -21,7 +26,8 @@ class AuthServices {
 
   static Future<User> signIn(String email, String password) async {
     try {
-      UserCredential userCredential = await _auth.signInWithEmailAndPassword(email: email, password: password);
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+          email: email, password: password);
       User user = userCredential.user;
       return user;
     } catch (e) {

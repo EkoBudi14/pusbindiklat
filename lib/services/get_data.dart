@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 class GetData {
   static CollectionReference userCollection =
-      FirebaseFirestore.instance.collection('user');
+      FirebaseFirestore.instance.collection('users');
 
   static Future<DocumentSnapshot> getUser(String id) async {
     return await userCollection.doc(id).get();

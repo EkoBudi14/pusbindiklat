@@ -1,4 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:pusbindiklat/model/user.dart';
 import 'package:pusbindiklat/pages/home/main_page.dart';
 import 'package:pusbindiklat/services/auth_services.dart';
 import 'package:pusbindiklat/services/post_data.dart';
@@ -17,6 +20,26 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController nameUserController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController noTelpController = TextEditingController();
+
+  final CollectionReference _userRef =
+      FirebaseFirestore.instance.collection('users');
+
+  final FirebaseAuth auth = FirebaseAuth.instance;
+
+  Future inputData() {
+    final User user = auth.currentUser;
+    final uid = user.uid;
+    return _userRef.doc(uid).set({
+      "name": nameUserController.text,
+      "email": emailController.text,
+      "fullName": fullnameController.text,
+      "noTelp": noTelpController.text,
+    });
+    // here you write the codes to input the data into firestore
+  }
+
+  User _user = FirebaseAuth.instance.currentUser;
+  // Future _addToCart() async {}
 
   @override
   // ignore: override_on_non_overriding_member
@@ -343,11 +366,12 @@ class _SignUpPageState extends State<SignUpPage> {
             noTelpController.text,
           );
 
-          PostData.createUser(
-            fullnameController.text,
-            noTelpController.text,
-            emailController.text,
-          );
+          // PostData.createUser(
+          //   fullnameController.text,
+          //   noTelpController.text,
+          //   emailController.text,
+          // );
+          await inputData();
           print(emailController.text);
           Navigator.pop(context);
         },
