@@ -1,8 +1,16 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../theme.dart';
 
-class TentangKami extends StatelessWidget {
+class TentangKami extends StatefulWidget {
+  @override
+  _TentangKamiState createState() => _TentangKamiState();
+}
+
+class _TentangKamiState extends State<TentangKami> {
   @override
   Widget build(BuildContext context) {
     Widget header() {

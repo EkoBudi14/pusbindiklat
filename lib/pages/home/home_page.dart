@@ -1,18 +1,30 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:pusbindiklat/pages/Prestasi_page.dart';
 import 'package:pusbindiklat/pages/profile_kami_page.dart';
 import 'package:pusbindiklat/pages/tata_tertib_page.dart';
 import 'package:pusbindiklat/pages/tentang_kami.dart';
+import 'package:pusbindiklat/services/webview.dart';
 import 'package:pusbindiklat/theme.dart';
 import 'package:pusbindiklat/widget/card_image.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final CollectionReference _foto =
+      FirebaseFirestore.instance.collection('foto');
+
   @override
   Widget build(BuildContext context) {
     Widget header() {
       return Container(
         margin: EdgeInsets.only(
-          top: 20,
+          top: 50,
           left: defaultMargin,
           right: defaultMargin,
         ),
@@ -191,13 +203,12 @@ class HomePage extends StatelessWidget {
             ),
             // ignore: deprecated_member_use
             child: RaisedButton(
-              onPressed: () {
+              onPressed: () async {
                 Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => ProfileKami(),
-                  ),
-                );
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => WebViewOnline(
+                            'https://profilepusbindiklatgemilang.business.site')));
               },
               color: Colors.white,
               shape: RoundedRectangleBorder(
@@ -317,7 +328,11 @@ class HomePage extends StatelessWidget {
             ),
             // ignore: deprecated_member_use
             child: RaisedButton(
-              onPressed: () {},
+              onPressed: () async {
+                openUrlPendaftaran(
+                  'https://docs.google.com/forms/d/e/1FAIpQLScWK_0amjoSnOLUj6lVp_p01a8XorN0WkyhO9H82rxOtrgyGQ/viewform',
+                );
+              },
               color: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
@@ -366,7 +381,10 @@ class HomePage extends StatelessWidget {
             ),
             // ignore: deprecated_member_use
             child: RaisedButton(
-              onPressed: () {},
+              onPressed: () async {
+                openUrlPendaftaranUlang(
+                    'https://docs.google.com/forms/d/e/1FAIpQLScM_WjaesmT7QIPuczDtzZ2V8YL6NSK8EybSsqWZnbt5HIZmA/viewform');
+              },
               color: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
@@ -431,15 +449,75 @@ class HomePage extends StatelessWidget {
       );
     }
 
-    return ListView(
-      children: [
-        (MediaQuery.of(context).orientation == Orientation.portrait)
-            ? Column(
+    return (MediaQuery.of(context).orientation == Orientation.portrait)
+        ? Scaffold(
+            body: SingleChildScrollView(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   header(),
-                  cardImageMoment(),
                   titleMenu(),
+                  Flexible(
+                    child: Container(
+                      height: 210,
+                      child: FutureBuilder<QuerySnapshot>(
+                          future: _foto.get(),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasError) {
+                              return Scaffold(
+                                body: Center(
+                                  child: Text("${snapshot.hasError}"),
+                                ),
+                              );
+                            }
+
+                            if (snapshot.connectionState ==
+                                ConnectionState.done) {
+                              return ListView(
+                                scrollDirection: Axis.horizontal,
+                                children: snapshot.data.docs.map((e) {
+                                  return Column(
+                                    children: [
+                                      Container(
+                                        margin: EdgeInsets.only(
+                                            right: 16, left: 16),
+                                        width: 220,
+                                        height: 170,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color:
+                                                  Colors.grey.withOpacity(0.5),
+                                              spreadRadius: 2,
+                                              blurRadius: 4,
+                                              offset: Offset(0, 3),
+                                            )
+                                          ],
+                                          image: DecorationImage(
+                                            image: NetworkImage(
+                                              '${e.data()['image']}',
+                                            ),
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                }).toList(),
+                              );
+                            }
+
+                            return Scaffold(
+                              body: Center(
+                                child: CircularProgressIndicator(),
+                              ),
+                            );
+                          }),
+                    ),
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -463,38 +541,6 @@ class HomePage extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      cardMenuPendaftaran(),
-                      cardMenuPendaftaranUlang(),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 25,
-                  ),
-                ],
-              )
-            : Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  header(),
-                  cardImageMoment(),
-                  SizedBox(
-                    height: 30,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      cardMenuTatatertib(),
-                      cardMenuPrestasi(),
-                      cardMenuProfileKami(),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 25,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      cardMenuTentangKami(),
                       cardMenuPendaftaran(),
                       cardMenuPendaftaranUlang(),
                     ],
@@ -504,7 +550,134 @@ class HomePage extends StatelessWidget {
                   ),
                 ],
               ),
-      ],
-    );
+            ),
+          )
+        : Scaffold(
+            body: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  header(),
+                  titleMenu(),
+                  Flexible(
+                    child: Container(
+                      height: 210,
+                      child: FutureBuilder<QuerySnapshot>(
+                          future: _foto.get(),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasError) {
+                              return Scaffold(
+                                body: Center(
+                                  child: Text("${snapshot.hasError}"),
+                                ),
+                              );
+                            }
+
+                            if (snapshot.connectionState ==
+                                ConnectionState.done) {
+                              return ListView(
+                                scrollDirection: Axis.horizontal,
+                                children: snapshot.data.docs.map((e) {
+                                  return Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        margin: EdgeInsets.only(
+                                            right: 16, left: 16),
+                                        width: 220,
+                                        height: 170,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color:
+                                                  Colors.grey.withOpacity(0.5),
+                                              spreadRadius: 2,
+                                              blurRadius: 4,
+                                              offset: Offset(0, 3),
+                                            )
+                                          ],
+                                          image: DecorationImage(
+                                            image: NetworkImage(
+                                              '${e.data()['image']}',
+                                            ),
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                }).toList(),
+                              );
+                            }
+
+                            return Scaffold(
+                              body: Center(
+                                child: CircularProgressIndicator(),
+                              ),
+                            );
+                          }),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          cardMenuTatatertib(),
+                          cardMenuPrestasi(),
+                          cardMenuProfileKami(),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 25,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          cardMenuTentangKami(),
+                          cardMenuPendaftaran(),
+                          cardMenuPendaftaranUlang(),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 25,
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ),
+          );
+  }
+}
+
+Future<void> openUrl(String url,
+    {bool forceWebView = false, bool enableJavaScript = false}) async {
+  if (await launch(url)) {
+    await launch(url,
+        forceWebView: forceWebView, enableJavaScript: enableJavaScript);
+  }
+}
+
+Future<void> openUrlPendaftaran(String url,
+    {bool forceWebView = false, bool enableJavaScript = false}) async {
+  if (await launch(url)) {
+    await launch(url,
+        forceWebView: forceWebView, enableJavaScript: enableJavaScript);
+  }
+}
+
+Future<void> openUrlPendaftaranUlang(String url,
+    {bool forceWebView = false, bool enableJavaScript = false}) async {
+  if (await launch(url)) {
+    await launch(url,
+        forceWebView: forceWebView, enableJavaScript: enableJavaScript);
   }
 }

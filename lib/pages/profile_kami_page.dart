@@ -1,15 +1,23 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:pusbindiklat/theme.dart';
 import 'package:pusbindiklat/widget/card_testimoni.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class ProfileKami extends StatelessWidget {
+class ProfileKami extends StatefulWidget {
+  @override
+  _ProfileKamiState createState() => _ProfileKamiState();
+}
+
+class _ProfileKamiState extends State<ProfileKami> {
   @override
   Widget build(BuildContext context) {
     Widget header() {
       return AppBar(
         elevation: 0,
         title: Text(
-          "Tentang Kami",
+          "Profile Kami",
           style: primaryTextStyle,
         ),
         centerTitle: true,
@@ -118,7 +126,15 @@ class ProfileKami extends StatelessWidget {
               style: primaryTextStyle,
             ),
             GestureDetector(
-              onTap: () {},
+              onTap: () async {
+                const url = "https://wa.me/087785201191";
+                var encoded = Uri.encodeFull(url);
+                if (await canLaunch(url)) {
+                  await launch(url);
+                } else {
+                  throw 'Could not launch $url';
+                }
+              },
               child: Container(
                 padding: EdgeInsets.only(
                   top: 15,
@@ -308,3 +324,4 @@ class ProfileKami extends StatelessWidget {
     );
   }
 }
+

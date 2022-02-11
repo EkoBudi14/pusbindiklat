@@ -1,4 +1,8 @@
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class AuthServices {
   static FirebaseAuth _auth = FirebaseAuth.instance;
@@ -9,6 +13,7 @@ class AuthServices {
     String name,
     String completeName,
     String noTelp,
+    // String url,
   ) async {
     try {
       UserCredential userCredential =
@@ -16,9 +21,27 @@ class AuthServices {
         email: email,
         password: password,
       );
+      
+      File _pickedImage;
+      final User userse = userCredential.user;
+      // final User user = _auth.currentUser;
+      final _uid = userse.uid;
+      final ref = FirebaseStorage.instance.ref().child('users').child(name);
+      await ref.putFile(_pickedImage);
+      // url = await ref.getDownloadURL();
+      // userse.updateProfile(photoURL: url, displayName: name);
+      // userse.reload();
 
-      User user = userCredential.user;
-      return user;
+      FirebaseFirestore.instance.collection('users').doc(_uid).set({
+        'id': _uid,
+        'email': email,
+        'name': name,
+        'fullName': completeName,
+        'noTelp': noTelp,
+        // 'imageUrl' : url,
+      });
+
+      return userse;
     } catch (e) {
       return null;
     }

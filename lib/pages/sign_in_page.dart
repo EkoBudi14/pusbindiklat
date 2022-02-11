@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:pusbindiklat/pages/forgot_password.dart';
 import 'package:pusbindiklat/pages/home/main_page.dart';
 import 'package:pusbindiklat/pages/sign_up_page.dart';
 import 'package:pusbindiklat/services/auth_services.dart';
@@ -15,9 +16,11 @@ class SignInPage extends StatefulWidget {
 class _SignInPageState extends State<SignInPage> {
   @override
   AuthServices _authServices = AuthServices();
+
   @override
-  void initState() {
-    super.initState();
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
   }
 
   final TextEditingController emailController = TextEditingController();
@@ -160,25 +163,28 @@ class _SignInPageState extends State<SignInPage> {
       );
     }
 
-    Widget signUp() {
+    Widget forgotPassword() {
       return Container(
         margin: EdgeInsets.only(top: 12),
         child: Row(
           children: [
             Text(
-              "Belum Mempunyai Akun ?",
+              "Apakah Anda Lupa Password ?",
               style: primaryTextStyle.copyWith(
                 fontSize: 12,
                 fontWeight: medium,
               ),
             ),
+            SizedBox(
+              width: 3,
+            ),
             GestureDetector(
               onTap: () {
                 Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => SignUpPage()));
+                    MaterialPageRoute(builder: (context) => ForgotPasssword()));
               },
               child: Text(
-                " Daftar",
+                "Klik Disini",
                 style: primaryTextStyle.copyWith(
                   fontSize: 12,
                   fontWeight: bold,
@@ -191,9 +197,45 @@ class _SignInPageState extends State<SignInPage> {
       );
     }
 
+    Widget signUp() {
+      return Container(
+        height: 50,
+        width: double.infinity,
+        margin: EdgeInsets.only(
+          top: 16,
+        ),
+        // ignore: deprecated_member_use
+        child: OutlineButton(
+          onPressed: () {
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => SignUpPage()));
+          },
+          borderSide: BorderSide(color: primaryColor, width: 2),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          child: Text(
+            "Daftar",
+            style: primaryTextStyle.copyWith(
+              fontSize: 16,
+              fontWeight: bold,
+              color: primaryColor,
+            ),
+          ),
+        ),
+      );
+    }
+
     Widget btnSignIn() {
       return isSignIn
-          ? CircularProgressIndicator()
+          ? Container(
+              margin: EdgeInsets.only(
+                top: 10,
+                bottom: 10,
+              ),
+              child: CircularProgressIndicator(
+                color: primaryColor,
+              ),
+            )
           : Container(
               height: 50,
               width: double.infinity,
@@ -240,10 +282,6 @@ class _SignInPageState extends State<SignInPage> {
                   setState(() {
                     isSignIn = false;
                   });
-                  // await AuthServices.signIn(
-                  //     emailController.text, passwordController.text);
-                  // Navigator.pop(context);
-                  // MaterialPageRoute(builder: (context) => MainPage());
                 },
                 style: TextButton.styleFrom(
                     backgroundColor: Color(0xffB12341),
@@ -293,11 +331,12 @@ class _SignInPageState extends State<SignInPage> {
             title(),
             emailInput(),
             passwordInput(),
+            forgotPassword(),
+            btnSignIn(),
             signUp(),
             SizedBox(
               height: 30,
             ),
-            btnSignIn(),
           ],
         ),
       );
